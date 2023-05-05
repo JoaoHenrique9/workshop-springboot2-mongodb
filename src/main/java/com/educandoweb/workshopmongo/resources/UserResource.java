@@ -6,8 +6,11 @@ import java.util.stream.Collectors;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.educandoweb.workshopmongo.dto.UserDTO;
 import com.educandoweb.workshopmongo.services.UserService;
@@ -32,4 +35,11 @@ public class UserResource {
         return ResponseEntity.ok().body(new UserDTO(service.findById(id)));
     }
 
+    @PostMapping
+    public ResponseEntity<Void> findById(@RequestBody UserDTO dto) {
+        var obj = service.FromDTO(dto);
+        service.insert(obj);
+        var uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+        return ResponseEntity.created(uri).build();
+    }
 }
